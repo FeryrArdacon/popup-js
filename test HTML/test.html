@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Responsive Website test</title>
+		<link rel="stylesheet" type="text/css" href="../css/popup.css">
+		<style type="text/css">
+			body {
+				background-color: #fff;
+				width: 100%;
+				height: 100%;
+			}
+			header,
+			footer {
+				color: #fcfcfc;
+				background-color: #333;
+			}
+			nav {
+				background-color: #eee;
+			}
+			@media (min-width : 768px) {
+				body {
+					overflow: hidden;
+				}
+				header {
+					position: absolute;
+					top: 0;
+					left: 0;
+					right: 0;
+					width: 100%;
+				}
+				nav {
+					position: absolute;
+					left: 0;
+					border-right: 1px solid #bbb;
+					width: 20%;
+					overflow: auto;
+				}
+				article {
+					position: absolute;
+					right: 0;
+					width: 80%;
+					overflow: auto;
+				}
+				footer {
+					position: absolute;
+					left: 0;
+					right: 0;
+					bottom: 0;
+					width: 100%;
+				}
+			}
+			@media (max-width : 767px) {
+				body {
+					margin: 0;
+				}
+				header,
+				nav,
+				article,
+				footer {
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+					box-sizing: border-box;
+					display: block;
+					float: left;
+					width: 100%;
+				}
+				nav {
+					border-bottom: 1px solid #bbb;
+				}
+			}
+			section {
+				margin: 0;
+				padding: 1em;
+			}
+			h1 {
+				font-family: "Arial";
+				margin: .5em;
+			}
+			h3 {
+				font-family: "Arial";
+				margin: .5em;
+			}
+			p {
+				font-family: "Times";
+				margin: 1em;
+				text-align: justify;
+			}
+			input[type=text] {
+				min-width: 200px;
+				background-color: #fff;
+				border: 1px solid #bbb;
+				margin: .5em;
+				padding:.75em 1em .5em 1em;
+				box-shadow:inset 0 2px 1px 0 #aaa;
+			}
+			input[type=text]:hover,
+			input[type=text]:active {
+				border: 1px solid #666;
+			}
+			.button-style-1,
+			.button-style-2 {
+				border: none;
+				background-color: transparent;
+				font-size: 14pt;
+				font-family: "Arial";
+				margin: .5em;
+				padding: .3em;
+				cursor: pointer;
+			}
+			.button-style-1-smaller,
+			.button-style-2-smaller {
+				border: none;
+				background-color: transparent;
+				font-size: 11pt;
+				font-family: "Arial";
+				margin: .5em;
+				padding: .3em;
+				cursor: pointer;
+			}
+			.button-style-1:hover,
+			.button-style-1-smaller:hover {
+				box-shadow: inset 0 2px 1px 0 #aaa;
+				background-color: #fbfbfb;
+			}
+			.button-style-2:hover,
+			.button-style-2-smaller:hover {
+				box-shadow: 0 0 2px 1px #bbb;
+			}
+			hr {
+				color: #bbb;
+				background: #bbb;
+				border-top: 1px solid #bbb;
+			}
+			.inline {
+				display: inline;
+			}
+			.float-left {
+				float: left;
+			}
+			.float-right {
+				float: right;
+			}
+			.clear-both {
+				clear: both;
+			}
+			.button-margin-padding {
+				margin: .5em;
+				padding: .3em;
+			}
+			.menu-entry {
+				display: block;
+				padding: .3em;
+			}
+			.menu-entry:hover {
+				cursor: pointer;
+			}
+			.menu-entry:active {
+				box-shadow: inset 0 0 2px 2px #aaa;
+				cursor: pointer;
+			}
+			
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="../js/popup.js"></script>
+		<script>
+			var isMenuOpenClicked = false;
+			
+			$(document).ready(function(){
+				setBoundsOfContent();
+				hideMenuResponsive();
+				$(window).resize(setBoundsOfContent);
+				$(window).resize(hideMenuResponsive);
+				
+				$('.content').hide();
+				
+				var idOfObject = $('.active')[0].id;
+				var classOfContent = '.' + idOfObject;
+				$(classOfContent).show();
+				
+				$('.on-click-alert-clicked').click(function(){
+					var text = getTextFromTextField();
+					showPopup(text, true);
+				});
+				
+				$('.on-click-yes-no-dialog').click(function(){
+					var text = getTextFromTextField();
+					showDialogPopup(text, true, ActionType.YES_NO_DIALOG, myTestActionListener);
+				});
+				
+				$('.on-click-yes-no-cancel-dialog').click(function(){
+					var text = getTextFromTextField();
+					showDialogPopup(text, true, ActionType.YES_NO_CANCEL_DIALOG, myTestActionListener);
+				});
+				
+				$('.on-click-ok-cancel-dialog').click(function(){
+					var text = getTextFromTextField();
+					showDialogPopup(text, true, ActionType.OK_CANCEL_DIALOG, myTestActionListener);
+				});
+				
+				$('.on-click-without-actiontype-dialog').click(function(){
+					var text = getTextFromTextField();
+					showDialogPopup(text, true, null, myTestActionListener);
+				});
+				
+				$('#burger-menu-button').click(function(){
+					if (isMenuOpenClicked == true) {
+						isMenuOpenClicked = false;
+					} else {
+						isMenuOpenClicked = true;
+					}
+					
+					$('#menu-entries').slideToggle('fast');
+				});
+				
+				$('.menu-entry').click(function(){
+					$('.menu-entry').removeClass('active');
+					$(this).addClass('active');
+					var localIdOfObject = $(this).attr('id');
+					var localClassOfContent = '.' + localIdOfObject;
+				
+					if (localIdOfObject != idOfObject){
+						var lastClassOfContent = '.' + idOfObject;
+						idOfObject = localIdOfObject;
+						$(lastClassOfContent).slideUp('fast', function(){
+							$(localClassOfContent).slideDown('fast');
+						});
+					}
+				});
+			});
+			
+			function myTestActionListener(){
+				alert('Return value: ' + dialogReturnValue);
+			}
+			
+			function getTextFromTextField(){
+				var text = $('#input-text').val();
+				if (text == '') 
+					text = 'SIE HABEN NICHTS EINGEGEBEN';
+				
+				return text;
+			}
+			
+			function setBoundsOfContent(){
+				var heightOfHeader = $('header').height();
+				var heightOfFooter = $('footer').height();
+				$('nav').css('top', heightOfHeader + 'px');
+				$('article').css('top', heightOfHeader + 'px');
+				$('nav').css('bottom', heightOfFooter + 'px');
+				$('article').css('bottom', heightOfFooter + 'px');
+			}
+			
+			function hideMenuResponsive(){
+				var widthOfWindow = $(window).width();
+				if (widthOfWindow >= 768) {
+					$('#burger-menu-button').hide();
+					isMenuOpenClicked = false;
+					$('#menu-entries').show();
+				} else
+					$('#burger-menu-button').show();
+					
+				if (widthOfWindow < 768 && isMenuOpenClicked == false)
+					$('#menu-entries').hide();
+			}
+		</script>
+	</head>
+	<body>
+		<header>
+			<h1>
+				Test einiger HTML Komponenten mit entsprechendem CSS und JS - Responsive Website
+			</h1>
+		</header>
+		<nav>
+			<div>
+				<h3 class="inline float-left button-margin-padding">
+					Menü
+				</h3>
+				<button id="burger-menu-button" class="inline float-right button-style-1">
+					<img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Hamburger_icon.svg" width=20 height=20 alt="Burger-Menu-Icon"></img>
+				</button>
+			</div>
+			<div id="menu-entries" class="clear-both">
+				<p>
+					<span id="me-text-input" class="menu-entry button-style-2-smaller active">
+						Text eingeben
+					</span>
+					<span id="me-button-style-1" class="menu-entry button-style-1-smaller">
+						Button Style 1
+					</span>
+					<span id="me-button-style-2" class="menu-entry button-style-2-smaller">
+						Button Style 2
+					</span>
+					<span id="me-typo-blind-text" class="menu-entry button-style-1-smaller">
+						Typo-Blind Text
+					</span>
+					<span id="me-dialog-popup" class="menu-entry button-style-2-smaller">
+						Dialoge
+					</span>
+				</p>
+			</div>
+		</nav>
+		<article>
+			<section>
+				<div class="content me-text-input">
+					<p>
+						Hier ist ein Input-Element mit dem Typ "Text". Der Text, den Sie hier eingeben, wird beim Klicken auf einen der Button's in einem Nachrichten-Fenster angezeigt.
+					</p>
+					<input id="input-text" type="text" value="" placeholder="Bitte geben Sie etwas ein"/>
+				</div>
+				<div class="content me-button-style-1">
+					<p>
+						Hier ist ein Input-Element mit dem Typ "Button".
+					</p>
+					<input type="button" value="Input als Button" class="on-click-alert-clicked button-style-1"/>
+					<p>
+						Hier ist ein Button-Element mit Bild.
+					</p>
+					<button class="on-click-alert-clicked button-style-1">
+						<img src="http://icons.iconarchive.com/icons/hopstarter/soft-scraps/16/Button-Blank-Gray-icon.png" alt="Star-Icon">
+							Button
+						</img>
+					</button>
+				</div>
+				<div class="content me-button-style-2">
+					<p>
+						Hier ist ein Input-Element mit dem Typ "Button".
+					</p>
+					<input type="button" value="Input als Button" class="on-click-alert-clicked button-style-2"/>
+					<p>
+						Hier ist ein Button-Element mit Bild.
+					</p>
+					<button class="on-click-alert-clicked button-style-2">
+						Button
+						<img src="http://icons.iconarchive.com/icons/hopstarter/soft-scraps/16/Button-Blank-Gray-icon.png" alt="Star-Icon"></img>
+					</button>
+				</div>
+				<div class="content me-typo-blind-text">
+					<p>
+						Dies ist ein Typoblindtext. An ihm kann man sehen, ob alle Buchstaben da sind und wie sie aussehen. Manchmal benutzt man Worte wie Hamburgefonts, Rafgenduks oder Handgloves, um Schriften zu testen. Manchmal Sätze, die alle Buchstaben des Alphabets enthalten - man nennt diese Sätze »Pangrams«. Sehr bekannt ist dieser: The quick brown fox jumps over the lazy old dog. Oft werden in Typoblindtexte auch fremdsprachige Satzteile eingebaut (AVAIL® and Wefox™ are testing aussi la Kerning), um die Wirkung in anderen Sprachen zu testen. In Lateinisch sieht zum Beispiel fast jede Schrift gut aus. Quod erat demonstrandum. Seit 1975 fehlen in den meisten Testtexten die Zahlen, weswegen nach TypoGb. 204 § ab dem Jahr 2034 Zahlen in 86 der Texte zur Pflicht werden. Nichteinhaltung wird mit bis zu 245 € oder 368 $ bestraft. Genauso wichtig sind mittlerweile auch Âçcèñtë, die in neueren Schriften aber fast immer enthalten sind. Ein wichtiges aber schwierig zu integrierendes Feld sind OpenType-Funktionalitäten. Je nach Software und Voreinstellungen können eingebaute Kapitälchen, Kerning oder Ligaturen (sehr pfiffig) nicht richtig dargestellt werden.
+					</p>
+				</div>
+				<div class="content me-dialog-popup">
+					<p>
+						Hier sind einige Dialoge zum testen.
+					</p>
+					<button class="on-click-yes-no-dialog button-style-2">
+						YES-NO-DIALOG
+					</button>
+					<button class="on-click-yes-no-cancel-dialog button-style-1">
+						YES-NO-CANCEL-DIALOG
+					</button>
+					<button class="on-click-ok-cancel-dialog button-style-2">
+						OK-CANCEL-DIALOG
+					</button>
+					<button class="on-click-without-actiontype-dialog button-style-1">
+						Dialog ohne Typ
+					</button>
+				</div>
+			<section>
+		</article>
+		<footer>
+			<p>
+				Erstellt von Patrick Siegmund.
+			</p>
+		</footer>
+		<div id="popup"></div>
+	</body>
+</html>
