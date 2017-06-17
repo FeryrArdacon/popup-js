@@ -13,6 +13,7 @@
  *	<li>.cancel-action</li>
  * </ul>
  * <br><br>For correct usability you need the popup.css file.
+ * <br>This library is licensed under the MIT.
  * 
  * 
  * @author Patrick Siegmund
@@ -37,25 +38,25 @@ var actActionListener = null;
  */
 class ActionTypeClass{
 	constructor(){
-	/**
-	 * ActionType for dialogs with yes and no button.<br>
-	 *	return value yes = <b>0</b><br>
-	 *	return value no = <b>1</b>
-	 */
-	this.YES_NO_DIALOG = 0;
-	/** 
-	 * ActionType for dialogs with yes, no and cancel button.<br>
-	 *	return value yes = <b>0</b><br>
-	 *	return value no = <b>1</b><br>
-	 *	return value cancel = <b>2</b>
-	 */
-	this.YES_NO_CANCEL_DIALOG = 1;
-	/**
-	 * ActionType for dialogs with ok and cancel button.<br>
-	 *	return value ok = <b>0</b><br>
-	 *	return value cancel = <b>1</b>
-	 */
-	this.OK_CANCEL_DIALOG = 2;
+		/**
+		 * ActionType for dialogs with yes and no button.<br>
+		 *	return value yes = <b>0</b><br>
+		 *	return value no = <b>1</b>
+		 */
+		this.YES_NO_DIALOG = 0;
+		/** 
+		 * ActionType for dialogs with yes, no and cancel button.<br>
+		 *	return value yes = <b>0</b><br>
+		 *	return value no = <b>1</b><br>
+		 *	return value cancel = <b>2</b>
+		 */
+		this.YES_NO_CANCEL_DIALOG = 1;
+		/**
+		 * ActionType for dialogs with ok and cancel button.<br>
+		 *	return value ok = <b>0</b><br>
+		 *	return value cancel = <b>1</b>
+		 */
+		this.OK_CANCEL_DIALOG = 2;
 	}
 }
 
@@ -66,22 +67,22 @@ class ActionTypeClass{
  */
 class ButtonTextClass{
 	constructor(){
-	/**
-	 * Standard button text <b>'Ok'</b>.
-	 */
-	this.OK_BUTTON_TEXT = 'Ok';
-	 /**
-	 * Standard button text <b>'Ja'</b>.
-	 */
-	this.YES_BUTTON_TEXT = 'Ja';
-	 /**
-	 * Standard button text <b>'Nein'</b>.
-	 */
-	this.NO_BUTTON_TEXT = 'Nein';
-	 /**
-	 * Standard button text <b>'Abbrechen'</b>.
-	 */
-	this.CANCEL_BUTTON_TEXT = 'Abbrechen';
+		/**
+		 * Standard button text <b>'Ok'</b>.
+		 */
+		this.OK_BUTTON_TEXT = 'Ok';
+		 /**
+		 * Standard button text <b>'Ja'</b>.
+		 */
+		this.YES_BUTTON_TEXT = 'Ja';
+		 /**
+		 * Standard button text <b>'Nein'</b>.
+		 */
+		this.NO_BUTTON_TEXT = 'Nein';
+		 /**
+		 * Standard button text <b>'Abbrechen'</b>.
+		 */
+		this.CANCEL_BUTTON_TEXT = 'Abbrechen';
 	}
 }
 
