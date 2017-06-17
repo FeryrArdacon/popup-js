@@ -230,7 +230,7 @@
 			});
 			
 			function myTestActionListener(){
-				alert('Return value: ' + dialogReturnValue);
+				alert('Return value: ' + ActionType.getName(DialogReturn.getActionType()) + ' ' + DialogReturn.getReturnValue());
 			}
 			
 			function getTextFromTextField(){

@@ -17,51 +17,126 @@
  * 
  * 
  * @author Patrick Siegmund
- * @version 1.1.1
+ * @version 1.2.0
  */
 
-var isPopupShown = false;
-var scrollPosition = 0;
-var scrollWithWindow = false;
-var idOfPopup = null;
-
-/**
- * Return value of dialogs (See {@link ActionTypeClass} for more information about the possible values).
- */
-var dialogReturnValue = 0;
-var actActionListener = null;
+var _isPopupShown = false;
+var _scrollPosition = 0;
+var _scrollWithWindow = false;
+var _idOfPopup = null;
+var _actActionListener = null;
 
 /**
  * A class with varants for action types. You need this types for dialogs.
+ * This class has an global variable: {@link ActionType}
  *
  * @author Patrick Siegmund
  */
 class ActionTypeClass{
 	constructor(){
 		/**
+		 * ActionType for standard popups.<br>
+		 *	return value ok = <b>0</b>
+		 */
+		this.OK_POPUP = 0;
+		/**
 		 * ActionType for dialogs with yes and no button.<br>
 		 *	return value yes = <b>0</b><br>
 		 *	return value no = <b>1</b>
 		 */
-		this.YES_NO_DIALOG = 0;
+		this.YES_NO_DIALOG = 1;
 		/** 
 		 * ActionType for dialogs with yes, no and cancel button.<br>
 		 *	return value yes = <b>0</b><br>
 		 *	return value no = <b>1</b><br>
 		 *	return value cancel = <b>2</b>
 		 */
-		this.YES_NO_CANCEL_DIALOG = 1;
+		this.YES_NO_CANCEL_DIALOG = 2;
 		/**
 		 * ActionType for dialogs with ok and cancel button.<br>
 		 *	return value ok = <b>0</b><br>
 		 *	return value cancel = <b>1</b>
 		 */
-		this.OK_CANCEL_DIALOG = 2;
+		this.OK_CANCEL_DIALOG = 3;
+		
+		/**
+		 * Gets the name of the action type by the action type value.
+		 *
+		 * @param {int} actionType
+		 * 				The action type value.
+		 * @return {String} The name of the action type.
+		 */
+		this.getName = function(actionType){
+			switch (actionType){
+				case this.OK_POPUP:
+					return 'OK_POPUP';
+				case this.YES_NO_DIALOG:
+					return 'YES_NO_DIALOG';
+				case this.YES_NO_CANCEL_DIALOG:
+					return 'YES_NO_CANCEL_DIALOG';
+				case this.OK_CANCEL_DIALOG:
+					return 'OK_CANCEL_DIALOG';
+				default:
+					return 'Error: No such type defined!';
+			}
+		}
 	}
 }
 
 /**
+ * Object of class {@link ActionTypeClass}.
+ */
+var ActionType = new ActionTypeClass();
+
+/**
+ * Holds the last used action type (see {@link ActionTypeClass}) and the return value of dialogs and popups.
+ * This class has an global variable: {@link DialogReturn}
+ *
+ * @author Patrick Siegmund
+ */
+class DialogReturnClass{
+	/**
+	 * Creates a dialog return.
+	 *
+	 * @param {int} actionType
+	 *				The action type value of the last dialog or popup.
+	 * @param {int} returnValue
+	 *				The return value of the last dialog or popup.
+	 */
+	constructor(actionType, returnValue){
+		var _actionType = actionType;
+		var _returnValue = returnValue;
+		
+		/**
+		 * Gets the action type of the last dialog.
+		 *
+		 * @return {int} The last action type.
+		 */
+		this.getActionType = function(){
+			return _actionType;
+		}
+		
+		/**
+		 * Gets the return value of the last dialog.
+		 *
+		 * @return {int} The last return value.
+		 */
+		this.getReturnValue = function(){
+			return _returnValue;
+		}
+	}
+}
+
+/**
+ * Object of class {@link DialogReturnClass}.
+ */
+var DialogReturn = new DialogReturnClass(ActionType.OK_POPUP, 0);
+
+
+
+/**
  * A class with varants for buttons texts.
+ * This class has an global variable: {@link ButtonText}
  *
  * @author Patrick Siegmund
  */
@@ -87,6 +162,12 @@ class ButtonTextClass{
 }
 
 /**
+ * Object of class {@link ButtonTextClass}.
+ */
+var ButtonText = new ButtonTextClass();
+
+
+/**
  * A class with standard actions for button on popups.
  *
  * @author Patrick Siegmund
@@ -102,72 +183,72 @@ class StandardActionCommandClass{
 		
 		/**
 		 * A dialog action for a yes button on actionType ActionType.YES_NO_DIALOG. (private use only!)<br>
-		 *	dialogReturnValue = <b>0</b>
+		 *	dialog return value = <b>0</b>
 		 */
 		this.yesNoDialog_yesAction = function(){
-			dialogReturnValue = 0;
+			DialogReturn = new DialogReturnClass(ActionType.YES_NO_DIALOG, 0);
 			hidePopupFunction();
-			actActionListener();
+			_actActionListener();
 		}
 
 		/**
 		 * A dialog action for the no button on actionType ActionType.YES_NO_DIALOG. (private use only!)<br>
-		 *	dialogReturnValue = <b>1</b>
+		 *	dialog return value = <b>1</b>
 		 */
 		this.yesNoDialog_noAction = function(){
-			dialogReturnValue = 1;
+			DialogReturn = new DialogReturnClass(ActionType.YES_NO_DIALOG, 1);
 			hidePopupFunction();
-			actActionListener();
+			_actActionListener();
 		}
 
 		/**
 		 * A dialog action for the yes button on actionType ActionType.YES_NO_CANCEL_DIALOG. (private use only!)<br>
-		 *	dialogReturnValue = <b>0</b>
+		 *	dialog return value = <b>0</b>
 		 */
 		this.yesNoCancelDialog_yesAction = function(){
-			dialogReturnValue = 0;
+			DialogReturn = new DialogReturnClass(ActionType.YES_NO_CANCEL_DIALOG, 0);
 			hidePopupFunction();
-			actActionListener();
+			_actActionListener();
 		}
 
 		/**
 		 * A dialog action for the no button on actionType ActionType.YES_NO_CANCEL_DIALOG. (private use only!)<br>
-		 *	dialogReturnValue = <b>1</b>
+		 *	dialog return value = <b>1</b>
 		 */
 		this.yesNoCancelDialog_noAction = function(){
-			dialogReturnValue = 1;
+			DialogReturn = new DialogReturnClass(ActionType.YES_NO_CANCEL_DIALOG, 1);
 			hidePopupFunction();
-			actActionListener();
+			_actActionListener();
 		}
 
 		/**
 		 * A dialog action for the cancel button on actionType ActionType.YES_NO_CANCEL_DIALOG. (private use only!)<br>
-		 *	dialogReturnValue = <b>2</b>
+		 *	dialog return value = <b>2</b>
 		 */
 		this.yesNoCancelDialog_cancelAction = function(){
-			dialogReturnValue = 2;
+			DialogReturn = new DialogReturnClass(ActionType.YES_NO_CANCEL_DIALOG, 2);
 			hidePopupFunction();
-			actActionListener();
+			_actActionListener();
 		}
 
 		/**
 		 * A dialog action for the ok button on actionType ActionType.OK_CANCEL_DIALOG. (private use only!)<br>
-		 *	dialogReturnValue = <b>0</b>
+		 *	dialog return value = <b>0</b>
 		 */
 		this.okCancelDialog_okAction = function(){
-			dialogReturnValue = 0;
+			DialogReturn = new DialogReturnClass(ActionType.OK_CANCEL_DIALOG, 0);
 			hidePopupFunction();
-			actActionListener();
+			_actActionListener();
 		}
 
 		/**
 		 * A dialog action for the cancel button on actionType ActionType.OK_CANCEL_DIALOG. (private use only!)<br>
-		 *	dialogReturnValue = <b>1</b>
+		 *	dialog return value = <b>1</b>
 		 */
 		this.okCancelDialog_cancelAction = function(){
-			dialogReturnValue = 1;
+			DialogReturn = new DialogReturnClass(ActionType.OK_CANCEL_DIALOG, 1);
 			hidePopupFunction();
-			actActionListener();
+			_actActionListener();
 		}
 		
 		function hidePopupFunction(){
@@ -175,25 +256,17 @@ class StandardActionCommandClass{
 			$('#popup').children().remove();
 			$('#popup').css('bottom', '');
 			$('#popup').css('right', '');
-			isPopupShown = false;
-			scrollWithWindow = false;
-			idOfPopup = null;
+			_isPopupShown = false;
+			_scrollWithWindow = false;
+			_idOfPopup = null;
 		}
 	}
 }
 
-/**
- * Object of class ButtonTextClass.
+/*
+ * Object of class {@link StandardActionCommandClass}.
  */
-var ButtonText = new ButtonTextClass();
-/**
- * Object of class ActionTypeClass.
- */
-var ActionType = new ActionTypeClass();
-/**
- * Object of class StandardActionCommandClass.
- */
-var StandardActionCommand = new StandardActionCommandClass();
+var _StandardActionCommand = new StandardActionCommandClass();
 
 /**
  * Hide standard popup and set auto-resize/relocate by window-rezize.
@@ -201,10 +274,10 @@ var StandardActionCommand = new StandardActionCommandClass();
 $(document).ready(function(){
 	$(window).resize(relocatePopup);
 	$(window).scroll(function(){
-		scrollPosition = $(window).scrollTop();
+		_scrollPosition = $(window).scrollTop();
 		
-		if (scrollWithWindow == true && idOfPopup != null)
-			relocatePopup(idOfPopup);
+		if (_scrollWithWindow == true && _idOfPopup != null)
+			relocatePopup(_idOfPopup);
 	});
 	$('#popup').hide();
 });
@@ -220,16 +293,16 @@ $(document).ready(function(){
  *			The text of the action (button title). DEFAULT = 'Ok'
  * @param {function} action
  *			The action that will processed by click on the button
- *			of the popup (onClick function). DEFAULT = StandardActionCommand.hidePopup()
+ *			of the popup (onClick function). DEFAULT = _StandardActionCommand.hidePopup()
  */
 function showPopup(text, scroll, actionText, action){
-	if (isPopupShown == true)
-		StandardActionCommand.hidePopup();
+	if (_isPopupShown == true)
+		_StandardActionCommand.hidePopup();
 	
 	if (typeof actionText === "undefined")
 		actionText = ButtonText.OK_BUTTON_TEXT;
 	if (typeof action === "undefined")
-		action = StandardActionCommand.hidePopup;
+		action = _StandardActionCommand.hidePopup;
 
 	var windowWidth = $(window).width();
 	var windowHeight = $(window).height();
@@ -238,17 +311,17 @@ function showPopup(text, scroll, actionText, action){
 	$('#popup').append('<button id="popup-button">' + actionText + '</button>');
 	$('#popup').find('#popup-button').click(action);
 	
-	isPopupShown = true;
-	idOfPopup = '#popup';
-	dialogReturnValue = 0;
+	_isPopupShown = true;
+	_idOfPopup = '#popup';
+	DialogReturn = new DialogReturnClass(ActionType.OK_POPUP, 0);
 	$('#popup').show();
 	
-	var bottom = windowHeight / 2 - $('#popup').height() / 2 - scrollPosition;
+	var bottom = windowHeight / 2 - $('#popup').height() / 2 - _scrollPosition;
 	var right = windowWidth / 2 - $('#popup').width() / 2;
 	$('#popup').css('bottom', bottom);
 	$('#popup').css('right', right);
 	
-	scrollWithWindow = scroll;
+	_scrollWithWindow = scroll;
 }
 
 /**
@@ -269,8 +342,8 @@ function showPopup(text, scroll, actionText, action){
  *			A function wich is processed after hiding the dialog.
  */
 function showDialogPopup(text, scroll, actionType, actionListener){
-	if (isPopupShown == true)
-		StandardActionCommand.hidePopup();
+	if (_isPopupShown == true)
+		_StandardActionCommand.hidePopup();
 	
 	if (typeof actionText === "undefined")
 		actionText = 'Ok';
@@ -282,43 +355,43 @@ function showDialogPopup(text, scroll, actionType, actionListener){
 	switch (actionType){
 		case ActionType.YES_NO_DIALOG:
 			$('#popup').append('<button id="popup-button" class="yes-action">' + ButtonText.YES_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.yes-action').click(StandardActionCommand.yesNoDialog_yesAction);
+			$('#popup').find('#popup-button.yes-action').click(_StandardActionCommand.yesNoDialog_yesAction);
 			$('#popup').append('<button id="popup-button" class="no-action">' + ButtonText.NO_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.no-action').click(StandardActionCommand.yesNoDialog_noAction);
+			$('#popup').find('#popup-button.no-action').click(_StandardActionCommand.yesNoDialog_noAction);
 			break;
 		case ActionType.YES_NO_CANCEL_DIALOG:
 			$('#popup').append('<button id="popup-button" class="yes-action">' + ButtonText.YES_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.yes-action').click(StandardActionCommand.yesNoCancelDialog_yesAction);
+			$('#popup').find('#popup-button.yes-action').click(_StandardActionCommand.yesNoCancelDialog_yesAction);
 			$('#popup').append('<button id="popup-button" class="no-action">' + ButtonText.NO_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.no-action').click(StandardActionCommand.yesNoCancelDialog_noAction);
+			$('#popup').find('#popup-button.no-action').click(_StandardActionCommand.yesNoCancelDialog_noAction);
 			$('#popup').append('<button id="popup-button" class="cancel-action">' + ButtonText.CANCEL_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.cancel-action').click(StandardActionCommand.yesNoCancelDialog_cancelAction);
+			$('#popup').find('#popup-button.cancel-action').click(_StandardActionCommand.yesNoCancelDialog_cancelAction);
 			break;
 		case ActionType.OK_CANCEL_DIALOG:
 			$('#popup').append('<button id="popup-button" class="ok-action">' + ButtonText.OK_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.ok-action').click(StandardActionCommand.okCancelDialog_okAction);
+			$('#popup').find('#popup-button.ok-action').click(_StandardActionCommand.okCancelDialog_okAction);
 			$('#popup').append('<button id="popup-button" class="cancel-action">' + ButtonText.CANCEL_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.cancel-action').click(StandardActionCommand.okCancelDialog_cancelAction);
+			$('#popup').find('#popup-button.cancel-action').click(_StandardActionCommand.okCancelDialog_cancelAction);
 			break;
 		default:
 			$('#popup').append('<button id="popup-button" class="ok-action">' + ButtonText.OK_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.ok-action').click(StandardActionCommand.hidePopup);
-			dialogReturnValue = 0;
+			$('#popup').find('#popup-button.ok-action').click(_StandardActionCommand.hidePopup);
+			DialogReturn = new DialogReturnClass(ActionType.OK_POPUP, 0);
 			if (typeof actionListener !== "undefined" && actionListener != null)
 				$('#popup').find('#popup-button.ok-action').click(actionListener);
 	}
 	
-	isPopupShown = true;
-	idOfPopup = '#popup';
-	actActionListener = actionListener;
+	_isPopupShown = true;
+	_idOfPopup = '#popup';
+	_actActionListener = actionListener;
 	$('#popup').show();
 	
-	var bottom = windowHeight / 2 - $('#popup').height() / 2 - scrollPosition;
+	var bottom = windowHeight / 2 - $('#popup').height() / 2 - _scrollPosition;
 	var right = windowWidth / 2 - $('#popup').width() / 2;
 	$('#popup').css('bottom', bottom);
 	$('#popup').css('right', right);
 	
-	scrollWithWindow = scroll;
+	_scrollWithWindow = scroll;
 }
 
 /**
@@ -330,22 +403,22 @@ function showDialogPopup(text, scroll, actionType, actionListener){
  *			The id of the prepared popup element.
  */
 function showPreparedPopup(id){
-	if (isPopupShown == true)
+	if (_isPopupShown == true)
 		hidePreparedPopup(id);
 
 	var windowWidth = $(window).width();
 	var windowHeight = $(window).height();
 	
-	isPopupShown = true;
-	idOfPopup = id;
+	_isPopupShown = true;
+	_idOfPopup = id;
 	$(id).show();
 	
-	var bottom = windowHeight / 2 - $(id).height() / 2 - scrollPosition;
+	var bottom = windowHeight / 2 - $(id).height() / 2 - _scrollPosition;
 	var right = windowWidth / 2 - $(id).width() / 2;
 	$(id).css('bottom', bottom);
 	$(id).css('right', right);
 	
-	scrollWithWindow = scroll;
+	_scrollWithWindow = scroll;
 }
 
 /**
@@ -359,9 +432,9 @@ function hidePreparedPopup(id){
 	$(id).hide();
 	$(id).css('bottom', '');
 	$(id).css('right', '');
-	isPopupShown = false;
-	scrollWithWindow = false;
-	idOfPopup = null;
+	_isPopupShown = false;
+	_scrollWithWindow = false;
+	_idOfPopup = null;
 }
 
 /**
@@ -369,11 +442,11 @@ function hidePreparedPopup(id){
  * need this method. Its set at the resize event of window automatically.
  */
 function relocatePopup(){
-	if (isPopupShown == true){
+	if (_isPopupShown == true){
 		var windowWidth = $(window).width();
 		var windowHeight = $(window).height();
 		
-		var bottom = windowHeight / 2 - $('#popup').height() / 2 - scrollPosition;
+		var bottom = windowHeight / 2 - $('#popup').height() / 2 - _scrollPosition;
 		var right = windowWidth / 2 - $('#popup').width() / 2;
 		
 		$('#popup').css('bottom', bottom);
@@ -389,11 +462,11 @@ function relocatePopup(){
  *			The id of the prepared popup element.
  */
 function relocatePreparedPopup(id){
-	if (isPopupShown == true){
+	if (_isPopupShown == true){
 		var windowWidth = $(window).width();
 		var windowHeight = $(window).height();
 		
-		var bottom = windowHeight / 2 - $(id).height() / 2 - scrollPosition;
+		var bottom = windowHeight / 2 - $(id).height() / 2 - _scrollPosition;
 		var right = windowWidth / 2 - $(id).width() / 2;
 		
 		$(id).css('bottom', bottom);
