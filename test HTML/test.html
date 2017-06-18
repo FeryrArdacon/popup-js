@@ -165,6 +165,7 @@
 		<script src="../js/popup.js"></script>
 		<script>
 			var isMenuOpenClicked = false;
+			var Popup;
 			
 			$(document).ready(function(){
 				setBoundsOfContent();
@@ -178,29 +179,31 @@
 				var classOfContent = '.' + idOfObject;
 				$(classOfContent).show();
 				
+				Popup = new PopupClass();
+				
 				$('.on-click-alert-clicked').click(function(){
 					var text = getTextFromTextField();
-					showPopup(text, true);
+					Popup.showPopup(text, true);
 				});
 				
 				$('.on-click-yes-no-dialog').click(function(){
 					var text = getTextFromTextField();
-					showDialogPopup(text, true, ActionType.YES_NO_DIALOG, myTestActionListener);
+					Popup.showDialogPopup(text, true, ActionType.YES_NO_DIALOG, myTestActionListener);
 				});
 				
 				$('.on-click-yes-no-cancel-dialog').click(function(){
 					var text = getTextFromTextField();
-					showDialogPopup(text, true, ActionType.YES_NO_CANCEL_DIALOG, myTestActionListener);
+					Popup.showDialogPopup(text, true, ActionType.YES_NO_CANCEL_DIALOG, myTestActionListener);
 				});
 				
 				$('.on-click-ok-cancel-dialog').click(function(){
 					var text = getTextFromTextField();
-					showDialogPopup(text, true, ActionType.OK_CANCEL_DIALOG, myTestActionListener);
+					Popup.showDialogPopup(text, true, ActionType.OK_CANCEL_DIALOG, myTestActionListener);
 				});
 				
 				$('.on-click-without-actiontype-dialog').click(function(){
 					var text = getTextFromTextField();
-					showDialogPopup(text, true, null, myTestActionListener);
+					Popup.showDialogPopup(text, true, null, myTestActionListener);
 				});
 				
 				$('#burger-menu-button').click(function(){
@@ -363,6 +366,5 @@
 				Erstellt von Patrick Siegmund.
 			</p>
 		</footer>
-		<div id="popup"></div>
 	</body>
 </html>

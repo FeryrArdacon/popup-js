@@ -17,7 +17,7 @@
  * 
  * 
  * @author Patrick Siegmund
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 var _isPopupShown = false;
@@ -25,6 +25,7 @@ var _scrollPosition = 0;
 var _scrollWithWindow = false;
 var _idOfPopup = null;
 var _actActionListener = null;
+var _popup = null;
 
 /**
  * A class with varants for action types. You need this types for dialogs.
@@ -252,10 +253,10 @@ class StandardActionCommandClass{
 		}
 		
 		function hidePopupFunction(){
-			$('#popup').hide();
-			$('#popup').children().remove();
-			$('#popup').css('bottom', '');
-			$('#popup').css('right', '');
+			_popup.hide();
+			_popup.children().remove();
+			_popup.css('bottom', '');
+			_popup.css('right', '');
 			_isPopupShown = false;
 			_scrollWithWindow = false;
 			_idOfPopup = null;
@@ -268,176 +269,194 @@ class StandardActionCommandClass{
  */
 var _StandardActionCommand = new StandardActionCommandClass();
 
-/**
- * Hide standard popup and set auto-resize/relocate by window-rezize.
- */
 $(document).ready(function(){
 	$(window).resize(relocatePopup);
 	$(window).scroll(function(){
 		_scrollPosition = $(window).scrollTop();
 		
-		if (_scrollWithWindow == true && _idOfPopup != null)
+		if (_scrollWithWindow == true && _idOfPopup != null && _popup != null)
 			relocatePopup(_idOfPopup);
 	});
-	$('#popup').hide();
 });
 
 /**
- * Show standard popup.
- *
- * @param {String} text
- *			The text wich should be shown in the popup.
- * @param {boolean} scroll
- *			True, if the popup should be in the middle of the screen by scrolling.
- * @param {String} actionText
- *			The text of the action (button title). DEFAULT = 'Ok'
- * @param {function} action
- *			The action that will processed by click on the button
- *			of the popup (onClick function). DEFAULT = _StandardActionCommand.hidePopup()
+ * This class represents a popup / dialog. With its methods you are able to show the user
+ * standard popups or dialogs.
  */
-function showPopup(text, scroll, actionText, action){
-	if (_isPopupShown == true)
-		_StandardActionCommand.hidePopup();
-	
-	if (typeof actionText === "undefined")
-		actionText = ButtonText.OK_BUTTON_TEXT;
-	if (typeof action === "undefined")
-		action = _StandardActionCommand.hidePopup;
+class PopupClass{
+	constructor(){
+		_popup = $('<div></div>').attr('id', 'popup').appendTo('body');
+		_popup.hide();
+		
+		/**
+		 * Show standard popup.
+		 *
+		 * @param {String} text
+		 *			The text wich should be shown in the popup.
+		 * @param {boolean} scroll
+		 *			True, if the popup should be in the middle of the screen by scrolling.
+		 * @param {String} actionText
+		 *			The text of the action (button title). DEFAULT = 'Ok'
+		 * @param {function} action
+		 *			The action that will processed by click on the button
+		 *			of the popup (onClick function). DEFAULT = _StandardActionCommand.hidePopup()
+		 */
+		this.showPopup = function(text, scroll, actionText, action){
+			if (_isPopupShown == true)
+				_StandardActionCommand.hidePopup();
+			
+			if (typeof actionText === "undefined")
+				actionText = ButtonText.OK_BUTTON_TEXT;
+			if (typeof action === "undefined")
+				action = _StandardActionCommand.hidePopup;
 
-	var windowWidth = $(window).width();
-	var windowHeight = $(window).height();
-	
-	$('#popup').append('<p id="popup-text">' + text + '</p>');
-	$('#popup').append('<button id="popup-button">' + actionText + '</button>');
-	$('#popup').find('#popup-button').click(action);
-	
-	_isPopupShown = true;
-	_idOfPopup = '#popup';
-	DialogReturn = new DialogReturnClass(ActionType.OK_POPUP, 0);
-	$('#popup').show();
-	
-	var bottom = windowHeight / 2 - $('#popup').height() / 2 - _scrollPosition;
-	var right = windowWidth / 2 - $('#popup').width() / 2;
-	$('#popup').css('bottom', bottom);
-	$('#popup').css('right', right);
-	
-	_scrollWithWindow = scroll;
-}
-
-/**
- * Show a standard dialog. The actionType decides wich dialog options are aviable.
- *
- * @param {String} text
- *			The text wich should be shown in the popup.
- * @param {boolean} scroll
- *			Boolean - true, if the popup should be in the middle of
- *			of the screen by scrolling.
- * @param {ActionTypeClass} actionType
- *			The type of dialog. You can choose the following types:
- *				<br>- {@link ActionType}.YES_NO_DIALOG
- *				<br>- {@link ActionType}.YES_NO_CANCEL_DIALOG
- *				<br>- {@link ActionType}.OK_CANCEL_DIALOG
- *			<br>The default dialog is the standard popup. The return value of the standard popup is always <b>0</b>.
- * @param {function} actionListener
- *			A function wich is processed after hiding the dialog.
- */
-function showDialogPopup(text, scroll, actionType, actionListener){
-	if (_isPopupShown == true)
-		_StandardActionCommand.hidePopup();
-	
-	if (typeof actionText === "undefined")
-		actionText = 'Ok';
-
-	var windowWidth = $(window).width();
-	var windowHeight = $(window).height();
-	
-	$('#popup').append('<p id="popup-text">' + text + '</p>');
-	switch (actionType){
-		case ActionType.YES_NO_DIALOG:
-			$('#popup').append('<button id="popup-button" class="yes-action">' + ButtonText.YES_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.yes-action').click(_StandardActionCommand.yesNoDialog_yesAction);
-			$('#popup').append('<button id="popup-button" class="no-action">' + ButtonText.NO_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.no-action').click(_StandardActionCommand.yesNoDialog_noAction);
-			break;
-		case ActionType.YES_NO_CANCEL_DIALOG:
-			$('#popup').append('<button id="popup-button" class="yes-action">' + ButtonText.YES_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.yes-action').click(_StandardActionCommand.yesNoCancelDialog_yesAction);
-			$('#popup').append('<button id="popup-button" class="no-action">' + ButtonText.NO_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.no-action').click(_StandardActionCommand.yesNoCancelDialog_noAction);
-			$('#popup').append('<button id="popup-button" class="cancel-action">' + ButtonText.CANCEL_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.cancel-action').click(_StandardActionCommand.yesNoCancelDialog_cancelAction);
-			break;
-		case ActionType.OK_CANCEL_DIALOG:
-			$('#popup').append('<button id="popup-button" class="ok-action">' + ButtonText.OK_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.ok-action').click(_StandardActionCommand.okCancelDialog_okAction);
-			$('#popup').append('<button id="popup-button" class="cancel-action">' + ButtonText.CANCEL_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.cancel-action').click(_StandardActionCommand.okCancelDialog_cancelAction);
-			break;
-		default:
-			$('#popup').append('<button id="popup-button" class="ok-action">' + ButtonText.OK_BUTTON_TEXT + '</button>');
-			$('#popup').find('#popup-button.ok-action').click(_StandardActionCommand.hidePopup);
+			var windowWidth = $(window).width();
+			var windowHeight = $(window).height();
+			
+			_popup.append('<p id="popup-text">' + text + '</p>');
+			_popup.append('<button id="popup-button">' + actionText + '</button>');
+			_popup.find('#popup-button').click(action);
+			
+			_isPopupShown = true;
+			_idOfPopup = _popup;
 			DialogReturn = new DialogReturnClass(ActionType.OK_POPUP, 0);
-			if (typeof actionListener !== "undefined" && actionListener != null)
-				$('#popup').find('#popup-button.ok-action').click(actionListener);
+			_popup.show();
+			
+			var bottom = windowHeight / 2 - _popup.height() / 2 - _scrollPosition;
+			var right = windowWidth / 2 - _popup.width() / 2;
+			_popup.css('bottom', bottom);
+			_popup.css('right', right);
+			
+			_scrollWithWindow = scroll;
+		}
+
+		/**
+		 * Show a standard dialog. The actionType decides wich dialog options are aviable.
+		 *
+		 * @param {String} text
+		 *			The text wich should be shown in the popup.
+		 * @param {boolean} scroll
+		 *			Boolean - true, if the popup should be in the middle of
+		 *			of the screen by scrolling.
+		 * @param {ActionTypeClass} actionType
+		 *			The type of dialog. You can choose the following types:
+		 *				<br>- {@link ActionType}.YES_NO_DIALOG
+		 *				<br>- {@link ActionType}.YES_NO_CANCEL_DIALOG
+		 *				<br>- {@link ActionType}.OK_CANCEL_DIALOG
+		 *			<br>The default dialog is the standard popup. The return value of the standard popup is always <b>0</b>.
+		 * @param {function} actionListener
+		 *			A function wich is processed after hiding the dialog.
+		 */
+		this.showDialogPopup = function(text, scroll, actionType, actionListener){
+			if (_isPopupShown == true)
+				_StandardActionCommand.hidePopup();
+
+			var windowWidth = $(window).width();
+			var windowHeight = $(window).height();
+			
+			_popup.append('<p id="popup-text">' + text + '</p>');
+			switch (actionType){
+				case ActionType.YES_NO_DIALOG:
+					_popup.append('<button id="popup-button" class="yes-action">' + ButtonText.YES_BUTTON_TEXT + '</button>');
+					_popup.find('#popup-button.yes-action').click(_StandardActionCommand.yesNoDialog_yesAction);
+					_popup.append('<button id="popup-button" class="no-action">' + ButtonText.NO_BUTTON_TEXT + '</button>');
+					_popup.find('#popup-button.no-action').click(_StandardActionCommand.yesNoDialog_noAction);
+					break;
+				case ActionType.YES_NO_CANCEL_DIALOG:
+					_popup.append('<button id="popup-button" class="yes-action">' + ButtonText.YES_BUTTON_TEXT + '</button>');
+					_popup.find('#popup-button.yes-action').click(_StandardActionCommand.yesNoCancelDialog_yesAction);
+					_popup.append('<button id="popup-button" class="no-action">' + ButtonText.NO_BUTTON_TEXT + '</button>');
+					_popup.find('#popup-button.no-action').click(_StandardActionCommand.yesNoCancelDialog_noAction);
+					_popup.append('<button id="popup-button" class="cancel-action">' + ButtonText.CANCEL_BUTTON_TEXT + '</button>');
+					_popup.find('#popup-button.cancel-action').click(_StandardActionCommand.yesNoCancelDialog_cancelAction);
+					break;
+				case ActionType.OK_CANCEL_DIALOG:
+					_popup.append('<button id="popup-button" class="ok-action">' + ButtonText.OK_BUTTON_TEXT + '</button>');
+					_popup.find('#popup-button.ok-action').click(_StandardActionCommand.okCancelDialog_okAction);
+					_popup.append('<button id="popup-button" class="cancel-action">' + ButtonText.CANCEL_BUTTON_TEXT + '</button>');
+					_popup.find('#popup-button.cancel-action').click(_StandardActionCommand.okCancelDialog_cancelAction);
+					break;
+				default:
+					_popup.append('<button id="popup-button" class="ok-action">' + ButtonText.OK_BUTTON_TEXT + '</button>');
+					_popup.find('#popup-button.ok-action').click(_StandardActionCommand.hidePopup);
+					DialogReturn = new DialogReturnClass(ActionType.OK_POPUP, 0);
+					if (typeof actionListener !== "undefined" && actionListener != null)
+						_popup.find('#popup-button.ok-action').click(actionListener);
+			}
+			
+			_isPopupShown = true;
+			_idOfPopup = _popup;
+			_actActionListener = actionListener;
+			_popup.show();
+			alert(_popup[0].id);
+			
+			var bottom = windowHeight / 2 - _popup.height() / 2 - _scrollPosition;
+			var right = windowWidth / 2 - _popup.width() / 2;
+			_popup.css('bottom', bottom);
+			_popup.css('right', right);
+			
+			_scrollWithWindow = scroll;
+		}
 	}
-	
-	_isPopupShown = true;
-	_idOfPopup = '#popup';
-	_actActionListener = actionListener;
-	$('#popup').show();
-	
-	var bottom = windowHeight / 2 - $('#popup').height() / 2 - _scrollPosition;
-	var right = windowWidth / 2 - $('#popup').width() / 2;
-	$('#popup').css('bottom', bottom);
-	$('#popup').css('right', right);
-	
-	_scrollWithWindow = scroll;
 }
 
 /**
- * Shows a prepared popup. A prepared popup is an user created HTML element.
- * For auto-resize/relocate use the method relocatePreparedPopup(id) at the
- * resize event of the window.
- *
- * @param {String} id
- *			The id of the prepared popup element.
+ * This class represents a popup / dialog. With its methods you are able to show the user
+ * in your html document predefined popups or dialogs.<br><br>
+ * If you want that your popup / dialog resizes and relocate by the browser window, use the global
+ * function {@link relocatePreparedPopup} at <b>$(window).resize(<i>call_of_relocatePreparedPopup</i>);</b>.
  */
-function showPreparedPopup(id){
-	if (_isPopupShown == true)
-		hidePreparedPopup(id);
+class PreparedPopupClass{
+	/**
+	 *	Creates an object of this class.
+	 *
+	 * @param {String} id
+	 *					Id of a html element. This element is your popup.
+	 */
+	constructor(id){
+		var _id = id;
+		$(_id).hide();
+		
+		/**
+		 * Shows a prepared popup. A prepared popup is an user created HTML element.
+		 * For auto-resize/relocate use the method relocatePreparedPopup(id) at the
+		 * resize event of the window.
+		 */
+		this.showPreparedPopup = function(){
+			if (_isPopupShown == true)
+				hidePreparedPopup(_id);
 
-	var windowWidth = $(window).width();
-	var windowHeight = $(window).height();
-	
-	_isPopupShown = true;
-	_idOfPopup = id;
-	$(id).show();
-	
-	var bottom = windowHeight / 2 - $(id).height() / 2 - _scrollPosition;
-	var right = windowWidth / 2 - $(id).width() / 2;
-	$(id).css('bottom', bottom);
-	$(id).css('right', right);
-	
-	_scrollWithWindow = scroll;
+			var windowWidth = $(window).width();
+			var windowHeight = $(window).height();
+			
+			_isPopupShown = true;
+			_idOfPopup = _id;
+			$(_id).show();
+			
+			var bottom = windowHeight / 2 - $(_id).height() / 2 - _scrollPosition;
+			var right = windowWidth / 2 - $(_id).width() / 2;
+			$(_id).css('bottom', bottom);
+			$(_id).css('right', right);
+			
+			_scrollWithWindow = scroll;
+		}
+
+		/**
+		 * Hides a prepared popup.
+		 * A prepared popup is an user created HTML element.
+		 */
+		this.hidePreparedPopup = function(){
+			$(_id).hide();
+			$(_id).css('bottom', '');
+			$(_id).css('right', '');
+			_isPopupShown = false;
+			_scrollWithWindow = false;
+			_idOfPopup = null;
+		}
+	}
 }
 
-/**
- * Hides a prepared popup.
- * A prepared popup is an user created HTML element.
- *
- * @param {String} id
- *			The id of the prepared popup element.
- */
-function hidePreparedPopup(id){
-	$(id).hide();
-	$(id).css('bottom', '');
-	$(id).css('right', '');
-	_isPopupShown = false;
-	_scrollWithWindow = false;
-	_idOfPopup = null;
-}
-
-/**
+/*
  * The auto-resize/relocate method for standard popup. The user don't
  * need this method. Its set at the resize event of window automatically.
  */
@@ -446,11 +465,11 @@ function relocatePopup(){
 		var windowWidth = $(window).width();
 		var windowHeight = $(window).height();
 		
-		var bottom = windowHeight / 2 - $('#popup').height() / 2 - _scrollPosition;
-		var right = windowWidth / 2 - $('#popup').width() / 2;
+		var bottom = windowHeight / 2 - _popup.height() / 2 - _scrollPosition;
+		var right = windowWidth / 2 - _popup.width() / 2;
 		
-		$('#popup').css('bottom', bottom);
-		$('#popup').css('right', right);
+		_popup.css('bottom', bottom);
+		_popup.css('right', right);
 	}
 }
 
