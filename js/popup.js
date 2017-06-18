@@ -388,7 +388,6 @@ class PopupClass{
 			_idOfPopup = _popup;
 			_actActionListener = actionListener;
 			_popup.show();
-			alert(_popup[0].id);
 			
 			var bottom = windowHeight / 2 - _popup.height() / 2 - _scrollPosition;
 			var right = windowWidth / 2 - _popup.width() / 2;
