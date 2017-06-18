@@ -1,6 +1,5 @@
 /**
  * @file This JavaScript file provides some methods for showing popups.
- * For the standard popups you need an empty <b>div</b> or <b>span</b> element with the ID <b>popup</b> as direct child of <b>body</b>.
  * The following ID's and HTML-Classes are used by this JavaScript file:
  * <ul>
  *	<li>#popup</li>
@@ -13,7 +12,8 @@
  *	<li>.cancel-action</li>
  * </ul>
  * <br><br>For correct usability you need the popup.css file.
- * <br>This library is licensed under the MIT.
+ * <br>This library is licensed under the MIT. For more information look at the
+ * license file in the git repository.
  * 
  * 
  * @author Patrick Siegmund
