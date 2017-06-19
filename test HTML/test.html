@@ -182,28 +182,33 @@
 				Popup = new PopupClass();
 				
 				$('.on-click-alert-clicked').click(function(){
+					var title = getTitleFromTextField();
 					var text = getTextFromTextField();
-					Popup.showPopup(text, true);
+					Popup.showPopup(title, text, true);
 				});
 				
 				$('.on-click-yes-no-dialog').click(function(){
+					var title = getTitleFromTextField();
 					var text = getTextFromTextField();
-					Popup.showDialogPopup(text, true, ActionType.YES_NO_DIALOG, myTestActionListener);
+					Popup.showDialogPopup(title, text, true, ActionType.YES_NO_DIALOG, myTestActionListener);
 				});
 				
 				$('.on-click-yes-no-cancel-dialog').click(function(){
+					var title = getTitleFromTextField();
 					var text = getTextFromTextField();
-					Popup.showDialogPopup(text, true, ActionType.YES_NO_CANCEL_DIALOG, myTestActionListener);
+					Popup.showDialogPopup(title, text, true, ActionType.YES_NO_CANCEL_DIALOG, myTestActionListener);
 				});
 				
 				$('.on-click-ok-cancel-dialog').click(function(){
+					var title = getTitleFromTextField();
 					var text = getTextFromTextField();
-					Popup.showDialogPopup(text, true, ActionType.OK_CANCEL_DIALOG, myTestActionListener);
+					Popup.showDialogPopup(title, text, true, ActionType.OK_CANCEL_DIALOG, myTestActionListener);
 				});
 				
 				$('.on-click-without-actiontype-dialog').click(function(){
+					var title = getTitleFromTextField();
 					var text = getTextFromTextField();
-					Popup.showDialogPopup(text, true, null, myTestActionListener);
+					Popup.showDialogPopup(title, text, true, null, myTestActionListener);
 				});
 				
 				$('#burger-menu-button').click(function(){
@@ -240,6 +245,14 @@
 				var text = $('#input-text').val();
 				if (text == '') 
 					text = 'SIE HABEN NICHTS EINGEGEBEN';
+				
+				return text;
+			}
+			
+			function getTitleFromTextField(){
+				var text = $('#input-title').val();
+				if (text == '') 
+					text = 'KEIN TITEL';
 				
 				return text;
 			}
@@ -306,9 +319,10 @@
 			<section>
 				<div class="content me-text-input">
 					<p>
-						Hier ist ein Input-Element mit dem Typ "Text". Der Text, den Sie hier eingeben, wird beim Klicken auf einen der Button's in einem Nachrichten-Fenster angezeigt.
+						Hier ist zwei Input-Elemente mit dem Typ "Text". Der Text, den Sie hier eingeben, wird beim Klicken auf einen der Button's in einem Nachrichten-Fenster angezeigt.
 					</p>
-					<input id="input-text" type="text" value="" placeholder="Bitte geben Sie etwas ein"/>
+					<input id="input-title" type="text" value="" placeholder="Popup Titel"/>
+					<input id="input-text" type="text" value="" placeholder="Popup Text"/>
 				</div>
 				<div class="content me-button-style-1">
 					<p>

@@ -2,7 +2,7 @@
  * This Cascading Style Sheet file provides some styles for popups. For correct usability you need the popup.js file.
  * 
  * @author Patrick Siegmund
- * @version 1.0.1
+ * @version 1.1.0
  */
  
 #popup, .popup {
@@ -34,7 +34,15 @@
 	box-shadow: 0 0 2px 1px #bbb;
 }
 
+#popup-title, .popup-title {
+	font-size: 15pt;
+	font-family: "Arial";
+	margin: .5em;
+	text-align: center;
+}
+
 #popup-text, .popup-text {
+	font-size: 12pt;
 	font-family: "Times";
 	margin: 1em;
 	text-align: justify;

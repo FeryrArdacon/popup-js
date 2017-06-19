@@ -300,6 +300,8 @@ class PopupClass{
 		/**
 		 * Show standard popup.
 		 *
+		 * @param {String} title
+		 *			The Title of the popup. Can be null.
 		 * @param {String} text
 		 *			The text wich should be shown in the popup.
 		 * @param {boolean} scroll
@@ -310,7 +312,7 @@ class PopupClass{
 		 *			The action that will processed by click on the button
 		 *			of the popup (onClick function). DEFAULT = _StandardActionCommand.hidePopup()
 		 */
-		this.showPopup = function(text, scroll, actionText, action){
+		this.showPopup = function(title, text, scroll, actionText, action){
 			if (_isPopupShown == true)
 				_StandardActionCommand.hidePopup();
 			
@@ -322,6 +324,8 @@ class PopupClass{
 			var windowWidth = $(window).width();
 			var windowHeight = $(window).height();
 			
+			if (typeof title !== "undefined" && title != null && title != '')
+				_popup.append('<h3 id="popup-title">' + title + '</h3>');
 			_popup.append('<p id="popup-text">' + text + '</p>');
 			_popup.append('<button id="popup-button">' + actionText + '</button>');
 			_popup.find('#popup-button').click(action);
@@ -342,10 +346,12 @@ class PopupClass{
 		/**
 		 * Show a standard dialog. The actionType decides wich dialog options are aviable.
 		 *
+		 * @param {String} title
+		 *			The Title of the dialog. Can be null.
 		 * @param {String} text
-		 *			The text wich should be shown in the popup.
+		 *			The text wich should be shown in the dialog.
 		 * @param {boolean} scroll
-		 *			Boolean - true, if the popup should be in the middle of
+		 *			Boolean - true, if the dialog should be in the middle of
 		 *			of the screen by scrolling.
 		 * @param {ActionTypeClass} actionType
 		 *			The type of dialog. You can choose the following types:
@@ -357,13 +363,15 @@ class PopupClass{
 		 * @param {function} actionListener
 		 *			A function wich is processed after hiding the dialog.
 		 */
-		this.showDialogPopup = function(text, scroll, actionType, actionListener){
+		this.showDialogPopup = function(title, text, scroll, actionType, actionListener){
 			if (_isPopupShown == true)
 				_StandardActionCommand.hidePopup();
 
 			var windowWidth = $(window).width();
 			var windowHeight = $(window).height();
 			
+			if (typeof title !== "undefined" && title != null && title != '')
+				_popup.append('<h3 id="popup-title">' + title + '</h3>');
 			_popup.append('<p id="popup-text">' + text + '</p>');
 			switch (actionType){
 				case ActionType.YES_NO_DIALOG:
@@ -420,7 +428,7 @@ class PreparedPopupClass{
 	 *	Creates an object of this class.
 	 *
 	 * @param {String} id
-	 *					Id of a html element. This element is your popup.
+	 *			Id of a html element. This element is your popup.
 	 */
 	constructor(id){
 		var _id = id;
