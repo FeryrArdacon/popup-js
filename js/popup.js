@@ -2,17 +2,17 @@
  * @file This JavaScript file provides some methods for showing popups.
  * The following ID's and HTML-Classes are used by this JavaScript file:
  * <ul>
- *	<li>#popup</li>
- *	<li>#popup-button</li>
- *	<li>#popup-button:hover</li>
- *	<li>#popup-text</li>
- *	<li>.yes-action</li>
- *	<li>.ok-action</li>
- *	<li>.no-action</li>
- *	<li>.cancel-action</li>
+ *	<li><i>#popup</i><br>(has CSS [as an alternativ you can use is the class <i>.popup</i> for predefined pupups or dialogs])</li>
+ *	<li><i>#popup-button</i><br>(has CSS [as an alternativ you can use is the class <i>.popup-button</i> for predefined pupups or dialogs])</li>
+ *	<li><i>#popup-button:hover</i><br>(has CSS [the alternativ class of id #popup-button has the same hover CSS])</li>
+ *	<li><i>#popup-text</i><br>(has CSS [as an alternativ you can use is the class <i>.popup-text</i> for predefined pupups or dialogs])</li>
+ *	<li><i>.yes-action</i></li>
+ *	<li><i>.ok-action</i></li>
+ *	<li><i>.no-action</i></li>
+ *	<li><i>.cancel-action</i></li>
  * </ul>
  * <br><br>For correct usability you need the popup.css file.
- * <br>This library is licensed under the MIT. For more information look at the
+ * <br>This library is licensed under MIT. For more information look at the
  * license file in the git repository.
  * 
  * 
@@ -28,8 +28,8 @@ var _actActionListener = null;
 var _popup = null;
 
 /**
- * A class with varants for action types. You need this types for dialogs.
- * This class has an global variable: {@link ActionType}
+ * A class with constants for action types. You need this types for dialogs.
+ * This class has a global variable: {@link ActionType}
  *
  * @author Patrick Siegmund
  */
@@ -38,12 +38,14 @@ class ActionTypeClass{
 		/**
 		 * ActionType for standard popups.<br>
 		 *	return value ok = <b>0</b>
+		 * @type {int}
 		 */
 		this.OK_POPUP = 0;
 		/**
 		 * ActionType for dialogs with yes and no button.<br>
 		 *	return value yes = <b>0</b><br>
 		 *	return value no = <b>1</b>
+		 * @type {int}
 		 */
 		this.YES_NO_DIALOG = 1;
 		/** 
@@ -51,12 +53,14 @@ class ActionTypeClass{
 		 *	return value yes = <b>0</b><br>
 		 *	return value no = <b>1</b><br>
 		 *	return value cancel = <b>2</b>
+		 * @type {int}
 		 */
 		this.YES_NO_CANCEL_DIALOG = 2;
 		/**
 		 * ActionType for dialogs with ok and cancel button.<br>
 		 *	return value ok = <b>0</b><br>
 		 *	return value cancel = <b>1</b>
+		 * @type {int}
 		 */
 		this.OK_CANCEL_DIALOG = 3;
 		
@@ -91,7 +95,7 @@ var ActionType = new ActionTypeClass();
 
 /**
  * Holds the last used action type (see {@link ActionTypeClass}) and the return value of dialogs and popups.
- * This class has an global variable: {@link DialogReturn}
+ * This class has a global variable: {@link DialogReturn}
  *
  * @author Patrick Siegmund
  */
@@ -136,8 +140,8 @@ var DialogReturn = new DialogReturnClass(ActionType.OK_POPUP, 0);
 
 
 /**
- * A class with varants for buttons texts.
- * This class has an global variable: {@link ButtonText}
+ * A class with constants for button texts.
+ * This class has a global variable: {@link ButtonText}
  *
  * @author Patrick Siegmund
  */
@@ -145,18 +149,23 @@ class ButtonTextClass{
 	constructor(){
 		/**
 		 * Standard button text <b>'Ok'</b>.
+		 * @type {String}
+		 * 
 		 */
 		this.OK_BUTTON_TEXT = 'Ok';
-		 /**
+		/**
 		 * Standard button text <b>'Ja'</b>.
+		 * @type {String}
 		 */
 		this.YES_BUTTON_TEXT = 'Ja';
-		 /**
+		/**
 		 * Standard button text <b>'Nein'</b>.
+		 * @type {String}
 		 */
 		this.NO_BUTTON_TEXT = 'Nein';
-		 /**
+		/**
 		 * Standard button text <b>'Abbrechen'</b>.
+		 * @type {String}
 		 */
 		this.CANCEL_BUTTON_TEXT = 'Abbrechen';
 	}
@@ -168,21 +177,21 @@ class ButtonTextClass{
 var ButtonText = new ButtonTextClass();
 
 
-/**
- * A class with standard actions for button on popups.
+/*
+ * A class with standard actions for buttons on standrad popups / dialogs.
  *
  * @author Patrick Siegmund
  */
 class StandardActionCommandClass{
 	constructor(){
-		/**
+		/*
 		 * Hides the standard popup (used as standard action; private use only!).
 		 */
 		this.hidePopup = function(){
 			hidePopupFunction();
 		}
 		
-		/**
+		/*
 		 * A dialog action for a yes button on actionType ActionType.YES_NO_DIALOG. (private use only!)<br>
 		 *	dialog return value = <b>0</b>
 		 */
@@ -192,7 +201,7 @@ class StandardActionCommandClass{
 			_actActionListener();
 		}
 
-		/**
+		/*
 		 * A dialog action for the no button on actionType ActionType.YES_NO_DIALOG. (private use only!)<br>
 		 *	dialog return value = <b>1</b>
 		 */
@@ -202,7 +211,7 @@ class StandardActionCommandClass{
 			_actActionListener();
 		}
 
-		/**
+		/*
 		 * A dialog action for the yes button on actionType ActionType.YES_NO_CANCEL_DIALOG. (private use only!)<br>
 		 *	dialog return value = <b>0</b>
 		 */
@@ -212,7 +221,7 @@ class StandardActionCommandClass{
 			_actActionListener();
 		}
 
-		/**
+		/*
 		 * A dialog action for the no button on actionType ActionType.YES_NO_CANCEL_DIALOG. (private use only!)<br>
 		 *	dialog return value = <b>1</b>
 		 */
@@ -222,7 +231,7 @@ class StandardActionCommandClass{
 			_actActionListener();
 		}
 
-		/**
+		/*
 		 * A dialog action for the cancel button on actionType ActionType.YES_NO_CANCEL_DIALOG. (private use only!)<br>
 		 *	dialog return value = <b>2</b>
 		 */
@@ -232,7 +241,7 @@ class StandardActionCommandClass{
 			_actActionListener();
 		}
 
-		/**
+		/*
 		 * A dialog action for the ok button on actionType ActionType.OK_CANCEL_DIALOG. (private use only!)<br>
 		 *	dialog return value = <b>0</b>
 		 */
@@ -242,7 +251,7 @@ class StandardActionCommandClass{
 			_actActionListener();
 		}
 
-		/**
+		/*
 		 * A dialog action for the cancel button on actionType ActionType.OK_CANCEL_DIALOG. (private use only!)<br>
 		 *	dialog return value = <b>1</b>
 		 */
@@ -343,7 +352,8 @@ class PopupClass{
 		 *				<br>- {@link ActionType}.YES_NO_DIALOG
 		 *				<br>- {@link ActionType}.YES_NO_CANCEL_DIALOG
 		 *				<br>- {@link ActionType}.OK_CANCEL_DIALOG
-		 *			<br>The default dialog is the standard popup. The return value of the standard popup is always <b>0</b>.
+		 *				<br>- {@link ActionType}.OK_POPUP
+		 *			<br>The default dialog is the {@link ActionType}.OK_POPUP. The return value of the standard popup is always <b>0</b>.
 		 * @param {function} actionListener
 		 *			A function wich is processed after hiding the dialog.
 		 */
@@ -418,8 +428,10 @@ class PreparedPopupClass{
 		
 		/**
 		 * Shows a prepared popup. A prepared popup is an user created HTML element.
-		 * For auto-resize/relocate use the method relocatePreparedPopup(id) at the
+		 * <br><br>For auto-resize/relocate use the method {@link relocatePreparedPopup} at the
 		 * resize event of the window.
+		 * <br><br>For hiding the popup add the methdod hidePreparedPopup of this class to
+		 * the buttons of your HTML element.
 		 */
 		this.showPreparedPopup = function(){
 			if (_isPopupShown == true)
@@ -474,7 +486,7 @@ function relocatePopup(){
 
 /**
  * The auto-resize/relocate method for prepared popups.
- * A prepared popup is an user created HTML element.
+ * A prepared popup is an user created HTML element. (See {@link PreparedPopupClass})
  *
  * @param {String} id
  *			The id of the prepared popup element.
