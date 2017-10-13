@@ -1,5 +1,5 @@
 # popup-js
-A JavaScript Library for popups.
+A JavaScript library for popups. (Requires JQuery)
 
 Pictures of the standard popups:
 
