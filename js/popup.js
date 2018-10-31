@@ -2,10 +2,10 @@
  * @file This JavaScript file provides some methods for showing popups.
  * The following ID's and HTML-Classes are used by this JavaScript file:
  * <ul>
- *	<li><i>#popup</i><br>(has CSS [as an alternativ you can use is the class <i>.popup</i> for predefined pupups or dialogs])</li>
- *	<li><i>#popup-button</i><br>(has CSS [as an alternativ you can use is the class <i>.popup-button</i> for predefined pupups or dialogs])</li>
+ *	<li><i>#popup</i><br>(has CSS [as an alternativ you can use the class <i>.popup</i> for predefined pupups or dialogs])</li>
+ *	<li><i>#popup-button</i><br>(has CSS [as an alternativ you can use the class <i>.popup-button</i> for predefined pupups or dialogs])</li>
  *	<li><i>#popup-button:hover</i><br>(has CSS [the alternativ class of id #popup-button has the same hover CSS])</li>
- *	<li><i>#popup-text</i><br>(has CSS [as an alternativ you can use is the class <i>.popup-text</i> for predefined pupups or dialogs])</li>
+ *	<li><i>#popup-text</i><br>(has CSS [as an alternativ you can use the class <i>.popup-text</i> for predefined pupups or dialogs])</li>
  *	<li><i>.yes-action</i></li>
  *	<li><i>.ok-action</i></li>
  *	<li><i>.no-action</i></li>
@@ -20,11 +20,34 @@
  * @version 1.3.1
  */
 
+/*
+ * State of popup visibility.
+ */
 var _isPopupShown = false;
+
+/*
+ * Position of the scrollbar at the web page.
+ */
 var _scrollPosition = 0;
+
+/*
+ * Popup should scroll with the page.
+ */
 var _scrollWithWindow = false;
+
+/*
+ * ID of the popup html element.
+ */
 var _idOfPopup = null;
+
+/*
+ * Actual action listener for popup buttons.
+ */
 var _actActionListener = null;
+
+/*
+ * The popup object.
+ */
 var _popup = null;
 
 /**
@@ -70,6 +93,7 @@ class ActionTypeClass{
 		 * @param {int} actionType
 		 * 				The action type value.
 		 * @return {String} The name of the action type.
+		 * @throws {Error} No such type defined!
 		 */
 		this.getName = function(actionType){
 			switch (actionType){
@@ -82,7 +106,7 @@ class ActionTypeClass{
 				case this.OK_CANCEL_DIALOG:
 					return 'OK_CANCEL_DIALOG';
 				default:
-					return 'Error: No such type defined!';
+					throw new Error("No such type defined! ActionType: " + actionType);
 			}
 		}
 	}
@@ -279,12 +303,12 @@ class StandardActionCommandClass{
 var _StandardActionCommand = new StandardActionCommandClass();
 
 $(document).ready(function(){
-	$(window).resize(relocatePopup);
+	$(window).resize(_relocatePopup);
 	$(window).scroll(function(){
 		_scrollPosition = $(window).scrollTop();
 		
 		if (_scrollWithWindow == true && _idOfPopup != null && _popup != null)
-			relocatePopup(_idOfPopup);
+			_relocatePopup(_idOfPopup);
 	});
 });
 
@@ -479,7 +503,7 @@ class PreparedPopupClass{
  * The auto-resize/relocate method for standard popup. The user don't
  * need this method. Its set at the resize event of window automatically.
  */
-function relocatePopup(){
+function _relocatePopup(){
 	if (_isPopupShown == true){
 		var windowWidth = $(window).width();
 		var windowHeight = $(window).height();
